@@ -1,0 +1,66 @@
+# Project: tank
+# Makefile created by Dev-C++ 4.9.7.0
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = tank_private.res
+OBJ  = Debug/tank.o Debug/debugging.o Debug/mod_display.o Debug/mod_game.o Debug/mod_missiles.o Debug/mod_network.o Debug/mod_terrain.o Debug/mod_ui.o Debug/mod_weapons.o Debug/handler_network.o Debug/handler_redraw.o Debug/handler_ui.o Debug/error_handling.o $(RES)
+LIBS =  -L"F:/Dev-Cpp/lib" -mwindows -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lshell32 -lole32 -loleaut32 -luuid -lodbc32 -lodbccp32 -lws2_32
+INCS =  -I"F:/Dev-Cpp/include"  -I"F:/Dev-Cpp/include/c++"  -I"F:/Dev-Cpp/include" 
+BIN  = Debug/tank.exe
+CXXFLAGS = $(INCS) -D__GNUWIN32__ -W -fexceptions -DWIN32 -D_DEBUG -D_WINDOWS -D_MBCS -fexceptions -g3
+CFLAGS = $(INCS) -D__GNUWIN32__ -W -fexceptions -DWIN32 -D_DEBUG -D_WINDOWS -D_MBCS -fexceptions -g3
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before Debug/tank.exe all-after
+
+
+clean: clean-custom
+	rm -f $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(OBJ) -o "Debug\tank.exe" $(LIBS) $(CXXFLAGS)
+
+Debug/tank.o: tank.cpp
+	$(CPP) -c tank.cpp -o Debug/tank.o $(CXXFLAGS)
+
+Debug/debugging.o: debugging.cpp
+	$(CPP) -c debugging.cpp -o Debug/debugging.o $(CXXFLAGS)
+
+Debug/mod_display.o: mod_display.cpp
+	$(CPP) -c mod_display.cpp -o Debug/mod_display.o $(CXXFLAGS)
+
+Debug/mod_game.o: mod_game.cpp
+	$(CPP) -c mod_game.cpp -o Debug/mod_game.o $(CXXFLAGS)
+
+Debug/mod_missiles.o: mod_missiles.cpp
+	$(CPP) -c mod_missiles.cpp -o Debug/mod_missiles.o $(CXXFLAGS)
+
+Debug/mod_network.o: mod_network.cpp
+	$(CPP) -c mod_network.cpp -o Debug/mod_network.o $(CXXFLAGS)
+
+Debug/mod_terrain.o: mod_terrain.cpp
+	$(CPP) -c mod_terrain.cpp -o Debug/mod_terrain.o $(CXXFLAGS)
+
+Debug/mod_ui.o: mod_ui.cpp
+	$(CPP) -c mod_ui.cpp -o Debug/mod_ui.o $(CXXFLAGS)
+
+Debug/mod_weapons.o: mod_weapons.cpp
+	$(CPP) -c mod_weapons.cpp -o Debug/mod_weapons.o $(CXXFLAGS)
+
+Debug/handler_network.o: handler_network.cpp
+	$(CPP) -c handler_network.cpp -o Debug/handler_network.o $(CXXFLAGS)
+
+Debug/handler_redraw.o: handler_redraw.cpp
+	$(CPP) -c handler_redraw.cpp -o Debug/handler_redraw.o $(CXXFLAGS)
+
+Debug/handler_ui.o: handler_ui.cpp
+	$(CPP) -c handler_ui.cpp -o Debug/handler_ui.o $(CXXFLAGS)
+
+Debug/error_handling.o: error_handling.cpp
+	$(CPP) -c error_handling.cpp -o Debug/error_handling.o $(CXXFLAGS)
+
+tank_private.res: tank_private.rc ./tank.rc 
+	$(WINDRES) -i tank_private.rc -I rc -o tank_private.res -O coff 
