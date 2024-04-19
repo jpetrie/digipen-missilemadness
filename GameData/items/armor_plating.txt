@@ -1,4 +1,0 @@
-name:Armor Plating
-cost:100
-qty:1
-armor:100

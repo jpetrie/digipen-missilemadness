@@ -1,4 +1,0 @@
-name:Ninja Phasing Trick
-cost:10000
-qty:1
-ninjitsu:stealth-dash

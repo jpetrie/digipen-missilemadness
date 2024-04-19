@@ -1,0 +1,4 @@
+name:Energy Shield Lvl 3
+cost:800
+qty:1
+shield:50:4

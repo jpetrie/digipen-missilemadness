@@ -1,4 +1,0 @@
-name:Energy Shield Lvl 1
-cost:500
-qty:1
-shield:10:1
