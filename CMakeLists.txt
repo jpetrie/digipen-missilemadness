@@ -67,6 +67,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${CodeFiles} ${DataFiles})
 add_executable(${Target} WIN32 ${CodeFiles} ${DataFiles})
 target_link_libraries(${Target} winmm wsock32)
 
+set_target_properties(${Target} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${Target}>")
+
 foreach(DataFile IN LISTS DataFiles)
   get_filename_component(FileDirectory ${DataFile} DIRECTORY)
   add_custom_command(
