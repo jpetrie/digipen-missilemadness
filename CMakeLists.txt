@@ -4,7 +4,9 @@ project("MissileMadness")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER CMake)
 
-set(Target "MissileMadness")
+set(GameTarget "MissileMadness")
+set(DataTarget "MissileMadness.Data")
+
 set(CodeFiles
   Code/debugging.cpp
   Code/debugging.h
@@ -64,16 +66,11 @@ set(DataFiles
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${CodeFiles} ${DataFiles})
 
-add_executable(${Target} WIN32 ${CodeFiles} ${DataFiles})
-target_link_libraries(${Target} winmm wsock32)
+add_custom_target(${DataTarget} ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Data $<TARGET_FILE_DIR:${GameTarget}>/Data
+)
 
-set_target_properties(${Target} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${Target}>")
-
-foreach(DataFile IN LISTS DataFiles)
-  get_filename_component(FileDirectory ${DataFile} DIRECTORY)
-  add_custom_command(
-    TARGET ${Target} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${FileDirectory}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/${DataFile}" "$<TARGET_FILE_DIR:${Target}>/${DataFile}"
-  )
-endforeach()
+add_executable(${GameTarget} WIN32 ${CodeFiles} ${DataFiles})
+add_dependencies(${GameTarget} ${DataTarget})
+set_target_properties(${GameTarget} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${GameTarget}>")
+target_link_libraries(${GameTarget} winmm wsock32)
