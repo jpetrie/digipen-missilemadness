@@ -30,9 +30,9 @@ vector<string> strexplode(const string &str,const string &tok)
 //  An std::vector<std::string> containing all substrings extracted from `str`.
 //
 {
-vector<string>  TheResult;
-unsigned int              TheStartPos = 0;
-unsigned int              TheEndPos = 0;
+std::vector<std::string> TheResult;
+std::string::size_type   TheStartPos = 0;
+std::string::size_type   TheEndPos = 0;
 
 	do
 	{

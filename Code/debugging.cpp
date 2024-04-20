@@ -186,11 +186,11 @@ void CDebugConsoleI::Write(const char *fmt,...)
 // --> ...  Specifies additional format data.
 //
 {
-char     TheBuffer[256];
-string   TheResult;
-string   TheScratch;
-int      ThePos;
-va_list  TheAP;
+char                   TheBuffer[256];
+string                 TheResult;
+string                 TheScratch;
+std::string::size_type ThePos;
+va_list                TheAP;
 
 	// This provides us printf() style variable-argument functionality.
 	va_start(TheAP,fmt);
