@@ -29,6 +29,9 @@
 #include "debugging.h"
 
 #include "mod_sound.h"
+
+#include "utilities.h"
+
 BG_Music bgm;
 
 string bgm_Title;
@@ -52,6 +55,7 @@ HINSTANCE  gAppInstance;
 // display resolution
 int gresolutionX = SCREEN_WIDTH;
 int gresolutionY = SCREEN_HEIGHT;
+bool gSwitchToFullscreen = true;
 
 // state information
 bool gActive;
@@ -115,15 +119,16 @@ bool        FlgDone;
 	dcon << "[STARTUP]\tReading configs from \"Game Data/config\"\n";
 	ReadCfgs();
 	
-
-	ChangeToFullScreen(SCREEN_WIDTH,SCREEN_HEIGHT);
-
+	if (gSwitchToFullscreen)
+	{
+		ChangeToFullScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
 	
 	DisplayStartup(gAppInstance,gMainWindow);
 	NetStartup();
 	GameStartup();
 
-		bgm.Init();
+		bgm.Init(); 
 		bgm.Play(bgm_Lobby.c_str(), true);
 
 	// Enter the message pump.
@@ -328,6 +333,27 @@ FILE *fp;
 char buf[256];
 string mname;
 int mport;
+	
+	// Apparently we never actually loaded this config file back in the day. It looks like it should allow for specifying
+	// the default player and game names, and such, which right now are just hard-coded. For now we're just going to add
+	// a setting to control the full screen mode.
+	std::ifstream configStream("Data/config/defaults.cfg");
+	std::string line;
+	while (std::getline(configStream, line))
+	{
+		std::vector<std::string> parts = strexplode(line, ":");
+		if (parts.size() >= 2)
+		{
+			std::string const& option = parts[0];
+			std::string const& value = parts[1];
+
+			if (option == "fullscreen")
+			{
+				gSwitchToFullscreen = std::stoi(value);
+			}
+		}
+	}
+
 	// Metaserver stuff.
 	fp = fopen("Data/config/metaserver.cfg","r");
 	if(fp)
