@@ -663,7 +663,7 @@ void UI_DisplayCurrentScreen ()
 
 
 				DisplayText(k_cashX, k_cashY, "Cash Remaining: $", GREEN);
-				DisplayText(k_cash2X, k_cashY, itoa(gInitialCash,numbuf,10), GREEN);
+				DisplayText(k_cash2X, k_cashY, std::to_string(gInitialCash).c_str(), GREEN);
 
 				DisplayText(k_cashX + 17, k_cashY + 15, "Weapons Left: ", GREEN);
 				DisplayText(k_cash2X, k_cashY + 15, itoa(MAX_WEAPONS - gWeapCtr,numbuf,10), GREEN);
