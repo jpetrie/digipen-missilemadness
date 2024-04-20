@@ -1549,7 +1549,7 @@ string   TheResult;
 
 	if((TheHostInfo = gethostbyname(dns)) == NULL)
  	{
- 		ThrowError(ERR_UNKNOWN);
+ 		errorDisplayAndExit(ErrorCode::Unknown);
   }
 
   TheResult = inet_ntoa(*((struct in_addr *)TheHostInfo->h_addr));

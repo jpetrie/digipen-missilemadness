@@ -36,9 +36,6 @@
 #include <vector>
 using namespace std;
 
-// resources
-#include "resource.h"
-
 
 // -----------------------------------------------------------------------------
 //                                                                       defines

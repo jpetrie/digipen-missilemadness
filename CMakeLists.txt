@@ -46,7 +46,6 @@ set(CodeFiles
   Code/mod_weapon_attributes.h
   Code/tank.cpp
   Code/tank.h
-  Code/tank.rc
   Code/utilities.cpp
   Code/utilities.h
 )

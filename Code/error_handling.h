@@ -1,33 +1,16 @@
 // =============================================================================
-// TANKGAME
+// Missile Madness
 //
-// (c) 2003 Team 1A, DigiPen Institute of Technology
+// (c) 2003 DigiPen Institute of Technology
 // =============================================================================
 
+#pragma once
 
-// -----------------------------------------------------------------------------
-//                                                                         guard
-// -----------------------------------------------------------------------------
+enum struct ErrorCode {
+  Unknown,
+  DisplayResolution,
+  DisplayDepth,
+  FailedToJoin,
+};
 
-#ifndef _TANK_ERRORHANDLING_H_
-#define _TANK_ERRORHANDLING_H_
-
-
-// -----------------------------------------------------------------------------
-//                                                                      includes
-// -----------------------------------------------------------------------------
-
-// tank
-#include "tank.h"
-
-
-// -----------------------------------------------------------------------------
-//                                                                    prototypes
-// -----------------------------------------------------------------------------
-
-// error throwing
-void ThrowError(int code);
-
-
-#endif
-
+void errorDisplayAndExit(ErrorCode code);

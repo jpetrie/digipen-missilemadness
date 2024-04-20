@@ -1,28 +1,19 @@
 // =============================================================================
-// TANKGAME
+// Missile Madness
 //
-// (c) 2003 Team 1A, DigiPen Institute of Technology
+// (c) 2003 DigiPen Institute of Technology
 // =============================================================================
-
-
-// -----------------------------------------------------------------------------
-//                                                                      includes
-// -----------------------------------------------------------------------------
-
-// tank
-#include "tank.h"
 
 #include "error_handling.h"
 
-#include "debugging.h"
+#include <string>
 
+#include <Windows.h>
 
-// -----------------------------------------------------------------------------
-//                                                                     functions
-// -----------------------------------------------------------------------------
+extern HWND gMainWindow;
 
 // _____________________________________________________________________________
-void ThrowError(int code)
+void errorDisplayAndExit(ErrorCode code)
 //
 // Displays a fatal error message window. Fatal errors cannot be recovered from
 // and only present the user with an 'exit' option.
@@ -33,11 +24,22 @@ void ThrowError(int code)
 // --> code  Error code to throw.
 //
 {
-char  TheBuffer[256];
+	std::string message = "An unknown fatal error has occured. Whatever you just did, it wasn't such a hot idea.";
 
-	LoadString(gAppInstance,code,TheBuffer,256);
-	MessageBox(gMainWindow,TheBuffer,"Fatal Error",(MB_OK | MB_ICONEXCLAMATION));
+	switch (code) {
+		case ErrorCode::DisplayResolution:
+			message = "Could not switch resolutions; it's probably time to upgrade that 13\" monitor.";
+			break;
+		case ErrorCode::DisplayDepth:
+			message = "Please set your monitor to 24-bit color or higher. Anything less is for wimps. You're not a wimp are you?";
+			break;
+		case ErrorCode::FailedToJoin:
+			message = "Unable to join the specified game. It's probably full, or they've decided to start without you. They obviously don't like you.";
+			break;
+		case ErrorCode::Unknown:
+			break;
+	}
 
-	exit(1);
+	MessageBox(gMainWindow, message.c_str(), "Fatal Error", (MB_OK | MB_ICONEXCLAMATION));
+	std::exit(EXIT_FAILURE);
 }
-

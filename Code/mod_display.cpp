@@ -30,7 +30,7 @@ void ChangeToFullScreen(int width, int height)
 	if(!EnumDisplaySettings(NULL,ENUM_CURRENT_SETTINGS,&dmSettings))
 	{
 		// Display error message if we couldn't get display settings
-		ThrowError(ERR_DISP_RES);
+		errorDisplayAndExit(ErrorCode::DisplayResolution);
 		return;
 	}
 
@@ -186,7 +186,7 @@ void DisplayCompRes(void)
 	comp = bits * planes;
 	if(comp < 32)
 	{
-		ThrowError(ERR_DISP_DEPTH);
+		errorDisplayAndExit(ErrorCode::DisplayDepth);
 	}
 }
 
