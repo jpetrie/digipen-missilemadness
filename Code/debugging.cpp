@@ -17,6 +17,7 @@
 
 #include "debugging.h"
 
+#include <mutex>
 
 // -----------------------------------------------------------------------------
 //                                                                static members
@@ -51,8 +52,12 @@ string         CDebugConsoleI::mInputBuffer;
 deque<string>  CDebugConsoleI::mOutputBuffer;
 string         CDebugConsoleI::mDanglingBuffer;
 
+// Used to prevent concurrent access to the above buffers from multiple threads.
+static std::mutex BufferMutex;
+
 bool  CDebugConsoleI::mVisible;
 extern bool first;
+
 
 // -----------------------------------------------------------------------------
 //                                                                     functions
@@ -110,6 +115,13 @@ CDebugConsoleI::CDebugConsoleI(void)
 	// Spawn the handler thread and allow it to execute (to create its
 	// message pump, the thread must call GetMessage() once).
 	mThreadH = CreateThread(NULL,0,CDebugConsoleI::nThreadRouter,NULL,0,&mThreadID);
+
+	// We probably managed to get lucky with this Sleep() call here; in practice, the first time
+	// the dcon macro gets used we run this code to spawn the worker thread. Setting that thread up
+	// involves manipulating the output buffer in the thread, but immediately after we return from
+	// here we go into a Write() call via the operator<< overloads and also manipulate the output
+	// buffer, leading to a crash. Sprinkling std::lock_guards around access to the input and output
+	// buffers is a quick band-aid, but really this entire interface should get rewritten.
 	Sleep(0);
 }
 
@@ -186,6 +198,9 @@ void CDebugConsoleI::Write(const char *fmt,...)
 // --> ...  Specifies additional format data.
 //
 {
+	std::lock_guard<std::mutex> guard(BufferMutex);
+	
+	
 char                   TheBuffer[256];
 string                 TheResult;
 string                 TheScratch;
@@ -262,10 +277,11 @@ RECT  TheRect;
 			{
 			string          TheCmd;
 			vector<string>  TheArgs;
+			std::lock_guard<std::mutex> guard(BufferMutex);
 
-				nInputBufferTokenize(&TheCmd,&TheArgs);
+				nInputBufferTokenize(&TheCmd, &TheArgs);
 				nInputBufferFlush();
-				nInputBufferExecute(TheCmd,TheArgs);
+				nInputBufferExecute(TheCmd, TheArgs);
 
 				InvalidateRect(mWindH,NULL,true);
 				return (true);
@@ -274,6 +290,8 @@ RECT  TheRect;
 			case VK_BACK:
 			// Delete the last character typed.
 			{
+				std::lock_guard<std::mutex> guard(BufferMutex);
+
 				if(mInputBuffer.length() > 0)
 				{
 				string::iterator  TheIt;
@@ -293,6 +311,8 @@ RECT  TheRect;
 			break;
 			default:
 			{
+				std::lock_guard<std::mutex> guard(BufferMutex);
+
 				// Add the key pressed to the buffer.
 				mInputBuffer += key;
 
@@ -322,12 +342,16 @@ HBITMAP     TheBitmap;
 	mWindSizeX = 800;
 	mWindSizeY = 600 / 2;
 
-	// Flush buffers.
-	nInputBufferFlush();
-	nOutputBufferFlush();
-	
-	// Fix a bug where the first line isn't pushed to the buffer.
-	mOutputBuffer.push_front("\n");
+	{
+		std::lock_guard<std::mutex> guard(BufferMutex);
+
+		// Flush buffers.
+		nInputBufferFlush();
+		nOutputBufferFlush();
+
+		// Fix a bug where the first line isn't pushed to the buffer.
+		mOutputBuffer.push_front("\n");
+	}
 
 	// Create window class.
 	TheWindowClass.cbSize        = sizeof(WNDCLASSEX);
@@ -373,6 +397,8 @@ void CDebugConsoleI::nDestroy(void)
 // Performs clean up.
 //
 {
+	std::lock_guard<std::mutex> guard(BufferMutex);
+
 	// Release GDI objects.
 	DeleteObject(mPenH);
 	DeleteObject(mFontH);
